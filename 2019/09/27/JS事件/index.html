@@ -1,0 +1,89 @@
+<html>
+<head>
+	
+	<title>JS事件</title>
+	<meta name="keywords" content="dshu.me" />
+
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    
+	   <link href="/css/main.css?v=3" rel="stylesheet" type="text/css" />
+    
+        <script src="/js/util.js"></script>
+        <script>
+            if(isMobile()) {
+                loadjscssfile('../css/mobile.css', 'css');
+            } else {
+                loadjscssfile('../css/desktop.css', 'css');
+            }
+        </script> 
+    
+
+    <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
+
+    
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=3"/>
+    
+    
+
+</head>
+
+<body>
+
+
+<h2 class="title">JS事件</h2>
+<!---
+<div style="text-align:center;margin-top: -10px;">
+<div class="article-category">
+发表于2019年9月27日
+
+
+
+
+ </div>
+--->
+</div>
+
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是JS事件"><span class="toc-text">什么是JS事件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#事件处理程序"><span class="toc-text">事件处理程序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#事件流"><span class="toc-text">事件流</span></a></li></ol>
+<h3 id="什么是JS事件"><a href="#什么是JS事件" class="headerlink" title="什么是JS事件"></a>什么是JS事件</h3><p>在&lt;&lt;JS高级程序设计&gt;&gt;中，是这么定义事件的:事件，就是文档或浏览器窗口中发生的一些特定的交互瞬间。以现在的眼光来看，其实不仅仅是在浏览器窗口了，JS在小程序、PWA,TNS等环境下，也在发挥其特定的作用。不过环境不重要，重要的是事件的机制，了解了事件的机制，就能在任何环境下游刃有余。</p>
+<h3 id="事件处理程序"><a href="#事件处理程序" class="headerlink" title="事件处理程序"></a>事件处理程序</h3><p>鼠标点击(click)、双击(dblclick)，页面加载完成(load)都是事件。我们可以通过以下几种形式来为事件指定处理程序</p>
+<blockquote>
+<p>HTML事件处理程序</p>
+</blockquote>
+<h3 id="事件流"><a href="#事件流" class="headerlink" title="事件流"></a>事件流</h3><p><img src="https://dshu.oss-cn-shanghai.aliyuncs.com/blog/js_event.jpg" width="100%" title="JS事件"></p>
+<p>我们设定一个大的DIV1，里面放DIV2，再在DIV2里面放入DIV3。在设计JS事件机制的时候，这个时候点击DIV3，有两种思路:</p>
+<ul>
+<li>一种顺序是1=&gt;2=&gt;3,先在1上触发，再依次往下，</li>
+<li>另外一种思路是3=&gt;2=&gt;1，在最里面的先触发，依次往上。</li>
+</ul>
+<p>前者就叫事件的捕获(event capturing)，后者叫事件的冒泡(event bubbling)。<br>我们在每一个div上加上捕获，和冒泡的事件监听</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'#box1'</span>).addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'box1 capture'</span>)</span><br><span class="line">&#125;, <span class="literal">true</span>)</span><br><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'#box1'</span>).addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'box1 bubble'</span>)</span><br><span class="line">&#125;, <span class="literal">false</span>)</span><br><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'#box2'</span>).addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'box2 capture'</span>)</span><br><span class="line">&#125;, <span class="literal">true</span>)</span><br><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'#box2'</span>).addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'box2 bubble'</span>)</span><br><span class="line">&#125;, <span class="literal">false</span>)</span><br><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'#box3'</span>).addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'box3 capture'</span>)</span><br><span class="line">&#125;, <span class="literal">true</span>)</span><br><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'#box3'</span>).addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'box3 bubble'</span>)</span><br><span class="line">&#125;, <span class="literal">false</span>)</span><br></pre></td></tr></table></figure>
+
+
+<!--<a href="http://dshu.me/2019/09/27/JS事件/#disqus_thread" class="article-comment-link">Comments</a>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = ''; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+-->
+<div style="display:none">
+<script src="http://s4.cnzz.com/stat.php?id=&web_id=" language="JavaScript"></script>script>
+</div>
+
+
+
+
+
+
+</body>
+</html>
