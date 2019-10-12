@@ -15,7 +15,7 @@
             if(isMobile()) {
                 loadjscssfile('../css/mobile.css', 'css');
             } else {
-                loadjscssfile('../css/desktop.css', 'css');
+                // loadjscssfile('../css/desktop.css', 'css');
             }
         </script> 
     
@@ -45,20 +45,109 @@
 --->
 </div>
 
-<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是JS事件"><span class="toc-text">什么是JS事件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#事件处理程序"><span class="toc-text">事件处理程序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#事件流"><span class="toc-text">事件流</span></a></li></ol>
-<h3 id="什么是JS事件"><a href="#什么是JS事件" class="headerlink" title="什么是JS事件"></a>什么是JS事件</h3><p>在&lt;&lt;JS高级程序设计&gt;&gt;中，是这么定义事件的:事件，就是文档或浏览器窗口中发生的一些特定的交互瞬间。以现在的眼光来看，其实不仅仅是在浏览器窗口了，JS在小程序、PWA,TNS等环境下，也在发挥其特定的作用。不过环境不重要，重要的是事件的机制，了解了事件的机制，就能在任何环境下游刃有余。</p>
+<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#什么是JS事件"><span class="toc-text">什么是JS事件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#事件处理程序"><span class="toc-text">事件处理程序</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#事件流"><span class="toc-text">事件流</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#事件委托"><span class="toc-text">事件委托</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#事件对象"><span class="toc-text">事件对象</span></a></li></ol>
+<h3 id="什么是JS事件"><a href="#什么是JS事件" class="headerlink" title="什么是JS事件"></a>什么是JS事件</h3><p>在&lt;&lt;JS高级程序设计&gt;&gt;中，是这么定义事件的: 事件，就是文档或浏览器窗口中发生的一些特定的交互瞬间。以现在的眼光来看，其实不仅仅是在浏览器窗口了，JS在小程序、PWA等环境下，也在发挥其特定的作用。</p>
 <h3 id="事件处理程序"><a href="#事件处理程序" class="headerlink" title="事件处理程序"></a>事件处理程序</h3><p>鼠标点击(click)、双击(dblclick)，页面加载完成(load)都是事件。我们可以通过以下几种形式来为事件指定处理程序</p>
-<blockquote>
-<p>HTML事件处理程序</p>
-</blockquote>
+<ul>
+<li><p>HTML事件处理程序</p>
+  <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;input type=<span class="string">"button"</span> value=<span class="string">"click me"</span> onclick=<span class="string">"alert(event.type)"</span>&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>DOM0级事件处理程序</p>
+  <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> btn = <span class="built_in">document</span>.querySelector(<span class="string">'#btn'</span>)</span><br><span class="line">btn.onclick = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>DOM2级事件处理程序<br>  也是我们最常是用的方式。通过addEventListener()和removeEventListener()来添加和移除。addEventListener接受三个参数:事件名称，回调函数和一个布尔值(true:捕获，默认false冒泡)。在IE浏览器上，则是使用attachEvent()和detachEvent()来添加和移除事件，另外在IE8极其更早版本，只支持事件冒泡。我们可以通过封装一个通用事件函数，做浏览器判断处理。</p>
+  <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> EventUtil = &#123;</span><br><span class="line">    addHandle(element,type,handle)&#123;</span><br><span class="line">        <span class="keyword">if</span>(element.addEventListener)&#123;</span><br><span class="line">            element.addEventLister(type,handle,<span class="literal">false</span>)<span class="comment">//现在基本上都是使用冒泡了</span></span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(element.attachEvent)&#123;</span><br><span class="line">            element.attachEvent(<span class="string">`on<span class="subst">$&#123;type&#125;</span>`</span>,handle)</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            element[<span class="string">`on<span class="subst">$&#123;type&#125;</span>`</span>] = handle</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    removeHandle()&#123;</span><br><span class="line">        <span class="keyword">if</span>(element.addEventListener)&#123;</span><br><span class="line">            element.removeEventListener(type,handle,<span class="literal">false</span>)</span><br><span class="line">        &#125;<span class="keyword">else</span> <span class="keyword">if</span>(element.attachEvent)&#123;</span><br><span class="line">            element.detachEvent(<span class="string">`on<span class="subst">$&#123;type&#125;</span>`</span>,handle)</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            element[<span class="string">`on<span class="subst">$&#123;type&#125;</span>`</span>] = <span class="literal">null</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
 <h3 id="事件流"><a href="#事件流" class="headerlink" title="事件流"></a>事件流</h3><p><img src="https://dshu.oss-cn-shanghai.aliyuncs.com/blog/js_event.jpg" width="100%" title="JS事件"></p>
 <p>我们设定一个大的DIV1，里面放DIV2，再在DIV2里面放入DIV3。在设计JS事件机制的时候，这个时候点击DIV3，有两种思路:</p>
 <ul>
-<li>一种顺序是1=&gt;2=&gt;3,先在1上触发，再依次往下，</li>
+<li>一种顺序是1=&gt;2=&gt;3, 先在1上触发，再依次往下，</li>
 <li>另外一种思路是3=&gt;2=&gt;1，在最里面的先触发，依次往上。</li>
 </ul>
 <p>前者就叫事件的捕获(event capturing)，后者叫事件的冒泡(event bubbling)。<br>我们在每一个div上加上捕获，和冒泡的事件监听</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'#box1'</span>).addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'box1 capture'</span>)</span><br><span class="line">&#125;, <span class="literal">true</span>)</span><br><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'#box1'</span>).addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'box1 bubble'</span>)</span><br><span class="line">&#125;, <span class="literal">false</span>)</span><br><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'#box2'</span>).addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'box2 capture'</span>)</span><br><span class="line">&#125;, <span class="literal">true</span>)</span><br><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'#box2'</span>).addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'box2 bubble'</span>)</span><br><span class="line">&#125;, <span class="literal">false</span>)</span><br><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'#box3'</span>).addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'box3 capture'</span>)</span><br><span class="line">&#125;, <span class="literal">true</span>)</span><br><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'#box3'</span>).addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'box3 bubble'</span>)</span><br><span class="line">&#125;, <span class="literal">false</span>)</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'#box1'</span>).addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'box1 捕获'</span>)</span><br><span class="line">&#125;, <span class="literal">true</span>)</span><br><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'#box1'</span>).addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'box1 冒泡'</span>)</span><br><span class="line">&#125;, <span class="literal">false</span>)</span><br><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'#box2'</span>).addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'box2 捕获'</span>)</span><br><span class="line">&#125;, <span class="literal">true</span>)</span><br><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'#box2'</span>).addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'box2 冒泡'</span>)</span><br><span class="line">&#125;, <span class="literal">false</span>)</span><br><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'#box3'</span>).addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'box3 捕获'</span>)</span><br><span class="line">&#125;, <span class="literal">true</span>)</span><br><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'#box3'</span>).addEventListener(<span class="string">'click'</span>, <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'box3 冒泡'</span>)</span><br><span class="line">&#125;, <span class="literal">false</span>)</span><br><span class="line"><span class="comment">// 点击BOX3 最终执行结果是</span></span><br><span class="line">box1 捕获 =&gt; box2 捕获 =&gt; box3 捕获 =&gt; box3 冒泡 =&gt; box2 冒泡 =&gt; box1 冒泡</span><br></pre></td></tr></table></figure>
+<p>在浏览器中，事件流分为三个阶段 捕获=&gt;处于目标阶段=&gt;冒泡。值得注意的是，处于目标阶段，HTML事件处理程序会先于捕获事件执行。<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;div id=<span class="string">"box3"</span> onclick=<span class="string">"console.log('box3 html event')"</span>&gt;&lt;/div&gt;</span><br><span class="line">这个事件会在 box3捕获前执行</span><br></pre></td></tr></table></figure></p>
+<h3 id="事件委托"><a href="#事件委托" class="headerlink" title="事件委托"></a>事件委托</h3><pre><code>如果事件处理程序过多，我们就要用到事件委托的机制了。事件委托主要是利用了事件冒泡的机制，通过在父元素上添加事件来处理相关逻辑。比如下面的列表，如果我们在每个li上添加事件，点击获取其id，如果li特别多，会导致内存占用高，引起性能问题，事件委托则不会。
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;ul id=<span class="string">"list"</span>&gt;</span><br><span class="line">    &lt;li id=<span class="string">"li1"</span>&gt;<span class="number">1</span>&lt;<span class="regexp">/li&gt;</span></span><br><span class="line"><span class="regexp">    &lt;li id="li2"&gt;2&lt;/</span>li&gt;</span><br><span class="line">    &lt;li id=<span class="string">"li3"</span>&gt;<span class="number">3</span>&lt;<span class="regexp">/li&gt;</span></span><br><span class="line"><span class="regexp">&lt;/u</span>l&gt;</span><br><span class="line"><span class="built_in">document</span>.querySelector(<span class="string">'#list'</span>).addEventListener(<span class="string">'click'</span>,<span class="function"><span class="keyword">function</span>(<span class="params">e</span>)</span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'e===&gt;'</span>,e.target.id)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+</code></pre><h3 id="事件对象"><a href="#事件对象" class="headerlink" title="事件对象"></a>事件对象</h3><table>
+<thead>
+<tr>
+<th style="text-align:center">属性/方法</th>
+<th style="text-align:center">类型</th>
+<th style="text-align:center">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">bubbles</td>
+<td style="text-align:center">Boolean</td>
+<td style="text-align:center">事件是否冒泡</td>
+</tr>
+<tr>
+<td style="text-align:center">cancelable</td>
+<td style="text-align:center">Boolean</td>
+<td style="text-align:center">是否可以取消事件的默认行为</td>
+</tr>
+<tr>
+<td style="text-align:center">currentTarget</td>
+<td style="text-align:center">Element</td>
+<td style="text-align:center">事件处理程序当前正在处理的元素</td>
+</tr>
+<tr>
+<td style="text-align:center">defaultPrevented</td>
+<td style="text-align:center">Boolean</td>
+<td style="text-align:center">为true表示调用了preventDefault()</td>
+</tr>
+<tr>
+<td style="text-align:center">detail</td>
+<td style="text-align:center">Integer</td>
+<td style="text-align:center">与事件相关的细节信息</td>
+</tr>
+<tr>
+<td style="text-align:center">eventPhase</td>
+<td style="text-align:center">Integer</td>
+<td style="text-align:center">事件阶段1:捕获，2:处于目标，3:冒泡</td>
+</tr>
+<tr>
+<td style="text-align:center">preventDefault()</td>
+<td style="text-align:center">Function</td>
+<td style="text-align:center">取消事件默认行为，需要cancel</td>
+</tr>
+<tr>
+<td style="text-align:center">stopImmediatePropagation()</td>
+<td style="text-align:center">Function</td>
+<td style="text-align:center">取消事件的进一步捕获或冒泡，同时组织任何事件处理程序被调用</td>
+</tr>
+<tr>
+<td style="text-align:center">stopPropagation()</td>
+<td style="text-align:center">Function</td>
+<td style="text-align:center">取消事件的进一步捕获或冒泡</td>
+</tr>
+<tr>
+<td style="text-align:center">target</td>
+<td style="text-align:center">Element</td>
+<td style="text-align:center">事件目标</td>
+</tr>
+<tr>
+<td style="text-align:center">trusted</td>
+<td style="text-align:center">Boolean</td>
+<td style="text-align:center">为true代表浏览器生成，为false表示由开发人员通过js</td>
+</tr>
+<tr>
+<td style="text-align:center">type</td>
+<td style="text-align:center">String</td>
+<td style="text-align:center">触发事件的类型</td>
+</tr>
+<tr>
+<td style="text-align:center">view</td>
+<td style="text-align:center">AbstractView</td>
+<td style="text-align:center">与事件关联的抽象视图，等同于发生时间的window对象</td>
+</tr>
+</tbody>
+</table>
+<p>在前面例子中，我们用到了e.target.id来获取li的id,这个参数e实际上是事件对象event，其包含了有关于这个时间的信息，比如类型，元素等。<br>这些属性中，要区分清楚地是currentTarget与target可能相同，也可能不同。当点击的事件正好是在事件目标上触发的时候，这两个值是相同的，否则不同。</p>
 
 
 <!--<a href="http://dshu.me/2019/09/27/JS事件/#disqus_thread" class="article-comment-link">Comments</a>
